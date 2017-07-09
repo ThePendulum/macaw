@@ -1,42 +1,41 @@
-#include <FastLED.h>
+#include "leds.h"
+#include "network.h"
+#include "webserver.h"
+#include "socketserver.h"
 
-#include "network.cpp"
-#include "webserver.cpp"
-#include "socketserver.cpp"
-
-#define DATA_PIN 5
-#define NUM_LEDS 150
-
+Leds leds;
 WebServer webServer;
 SocketServer socketServer;
 Network network;
 
-CRGB leds[NUM_LEDS];
+int fps = 30;
+int wait = 1000 / fps;
+int beat = 0;
 
-int incoming;
+uint32_t lastBeat = millis();
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Initializing Macaw");
 
-  // LEDs
-  FastLED.addLeds<WS2811, DATA_PIN>(leds, NUM_LEDS);
-  FastLED.showColor(CHSV(120, 255, 255));
+  leds.init();
 
   network.goOnline();
 
   webServer.start();
-  socketServer.start();
+  socketServer.start(leds);
 }
 
 void loop() {
+  network.loop();
   webServer.loop();
   socketServer.loop();
 
-  if (Serial.available() > 0) {
-    incoming = Serial.parseInt();
-    Serial.println(incoming);
+  uint32_t now = millis();
+
+  if(now - lastBeat > wait) {
+    lastBeat = now;
     
-    FastLED.showColor(CHSV((incoming * 255) / 360, 255, 255));
+    leds.render(beat);
   }
 }

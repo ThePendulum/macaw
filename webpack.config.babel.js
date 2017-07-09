@@ -7,7 +7,7 @@ const cssnext = require('postcss-cssnext');
 
 const config = {
     entry: {
-        main: path.join(__dirname, 'assets/main.js')
+        main: path.join(__dirname, 'assets/js/main.js')
     },
     output: {
         filename: 'data/bundle.js'
@@ -27,18 +27,6 @@ const config = {
     devtool: 'cheap-source-map',
     module: {
         rules: [{
-            test: /\.vue$/,
-            exclude: /node_modules/,
-            loader: 'vue-loader',
-            options: {
-                loaders: {
-                    css: ExtractTextPlugin.extract({
-                        use: 'css-loader',
-                        fallback: 'vue-style-loader'
-                    })
-                }
-            }
-        }, {
             test: /\.json$/,
             exclude: /node_modules/,
             loader: 'json'
@@ -54,17 +42,13 @@ const config = {
             test: /\.scss$/,
             loader: ExtractTextPlugin.extract({loader: 'css-loader!sass-loader'})
         }, {
-            test: /\.(woff(2)?|ttf|eot)$/,
-            loader: 'url-loader?name=public/fonts/[name].[ext]'
-        }, {
             test: /\.svg/,
             loader: 'raw-loader'
         }]
     },
     resolve: {
         alias: {
-            config: path.join(__dirname, 'assets/js/config.js'),
-            'vue$': 'vue/dist/vue.common.js'
+            config: path.join(__dirname, 'assets/js/config.js')
         }
     }
 };
