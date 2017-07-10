@@ -194,25 +194,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var hue = document.querySelector('#hue');
 var hueMode = document.querySelector('#hueMode');
+var hueSpeed = document.querySelector('#hueSpeed');
 
 var saturation = document.querySelector('#saturation');
 var saturationMode = document.querySelector('#saturationMode');
+var saturationSpeed = document.querySelector('#saturationSpeed');
 
 var value = document.querySelector('#value');
 var valueMode = document.querySelector('#valueMode');
+var valueSpeed = document.querySelector('#valueSpeed');
 
 var channels = {
     hue: {
         mode: 0,
-        value: 0
+        value: 0,
+        speed: 0
     },
     saturation: {
         mode: 0,
-        value: 255
+        value: 255,
+        speed: 0.1
     },
     value: {
         mode: 0,
-        value: 255
+        value: 255,
+        speed: 0.1
     }
 };
 
@@ -226,6 +232,13 @@ hue.addEventListener('input', function (event) {
 hueMode.addEventListener('change', function (event) {
     channels.hue.mode = parseInt(event.target.value);
     __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('hueMode', channels.hue.mode);
+
+    sync();
+});
+
+hueSpeed.addEventListener('input', function (event) {
+    channels.hue.speed = parseFloat(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('hueSpeed', channels.hue.speed);
 
     sync();
 });
@@ -244,6 +257,13 @@ saturationMode.addEventListener('change', function (event) {
     sync();
 });
 
+saturationSpeed.addEventListener('input', function (event) {
+    channels.saturation.speed = parseFloat(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('saturationSpeed', channels.saturation.speed);
+
+    sync();
+});
+
 value.addEventListener('input', function (event) {
     channels.value.value = parseInt(event.target.value);
     __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('value', channels.value.value);
@@ -258,7 +278,26 @@ valueMode.addEventListener('change', function (event) {
     sync();
 });
 
+valueSpeed.addEventListener('input', function (event) {
+    channels.value.speed = parseFloat(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('valueSpeed', channels.value.speed);
+
+    sync();
+});
+
 function sync(channel) {
+    hue.value = channels.hue.value;
+    hueMode.value = channels.hue.mode;
+    hueSpeed.value = channels.hue.speed;
+
+    saturation.value = channels.saturation.value;
+    saturationMode.value = channels.saturation.mode;
+    saturationSpeed.value = channels.saturation.speed;
+
+    value.value = channels.value.value;
+    valueMode.value = channels.value.mode;
+    valueSpeed.value = channels.value.speed;
+
     var fixedHue = Array.from({ length: 7 }, function (value, index) {
         return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
     });

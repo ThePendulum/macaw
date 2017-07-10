@@ -8,7 +8,7 @@ WebServer webServer;
 SocketServer socketServer;
 Network network;
 
-int fps = 30;
+int fps = 60;
 int wait = 1000 / fps;
 int beat = 0;
 

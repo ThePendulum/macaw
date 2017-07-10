@@ -58,12 +58,32 @@ class SocketServer {
           leds->setHueMode(root["hueMode"]);
       }
       
+      if(root.containsKey("hueSpeed")) {
+          leds->setHueSpeed(root["hueSpeed"]);
+      }
+      
       if(root.containsKey("saturation")) {
           leds->setSaturation(root["saturation"]);
       }
       
+      if(root.containsKey("saturationmode")) {
+          leds->setSaturationMode(root["saturationMode"]);
+      }
+      
+      if(root.containsKey("saturationSpeed")) {
+          leds->setSaturationSpeed(root["saturationSpeed"]);
+      }
+      
       if(root.containsKey("value")) {
           leds->setValue(root["value"]);
+      }
+      
+      if(root.containsKey("valueMode")) {
+          leds->setValueMode(root["valueMode"]);
+      }
+      
+      if(root.containsKey("valueSpeed")) {
+          leds->setValueSpeed(root["valueSpeed"]);
       }
     };
 };

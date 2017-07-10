@@ -7,25 +7,31 @@ import {hsvToRgb} from './hsvToRgb.js';
 
 const hue = document.querySelector('#hue');
 const hueMode = document.querySelector('#hueMode');
+const hueSpeed = document.querySelector('#hueSpeed');
 
 const saturation = document.querySelector('#saturation');
 const saturationMode = document.querySelector('#saturationMode');
+const saturationSpeed = document.querySelector('#saturationSpeed');
 
 const value = document.querySelector('#value');
 const valueMode = document.querySelector('#valueMode');
+const valueSpeed = document.querySelector('#valueSpeed');
 
 const channels = {
     hue: {
         mode: 0,
-        value: 0
+        value: 0,
+        speed: 0
     },
     saturation: {
         mode: 0,
-        value: 255
+        value: 255,
+        speed: 0.1
     },
     value: {
         mode: 0,
-        value: 255
+        value: 255,
+        speed: 0.1
     }
 };
 
@@ -39,6 +45,13 @@ hue.addEventListener('input', event => {
 hueMode.addEventListener('change', event => {
     channels.hue.mode = parseInt(event.target.value);
     socket.emit('hueMode', channels.hue.mode);
+
+    sync();
+});
+
+hueSpeed.addEventListener('input', event => {
+    channels.hue.speed = parseFloat(event.target.value);
+    socket.emit('hueSpeed', channels.hue.speed);
 
     sync();
 });
@@ -57,6 +70,13 @@ saturationMode.addEventListener('change', event => {
     sync();
 });
 
+saturationSpeed.addEventListener('input', event => {
+    channels.saturation.speed = parseFloat(event.target.value);
+    socket.emit('saturationSpeed', channels.saturation.speed);
+
+    sync();
+});
+
 value.addEventListener('input', event => {
     channels.value.value = parseInt(event.target.value);
     socket.emit('value', channels.value.value);
@@ -71,8 +91,27 @@ valueMode.addEventListener('change', event => {
     sync();
 });
 
+valueSpeed.addEventListener('input', event => {
+    channels.value.speed = parseFloat(event.target.value);
+    socket.emit('valueSpeed', channels.value.speed);
+
+    sync();
+});
+
 
 function sync(channel) {
+    hue.value = channels.hue.value;
+    hueMode.value = channels.hue.mode;
+    hueSpeed.value = channels.hue.speed;
+
+    saturation.value = channels.saturation.value;
+    saturationMode.value = channels.saturation.mode;
+    saturationSpeed.value = channels.saturation.speed;
+
+    value.value = channels.value.value;
+    valueMode.value = channels.value.mode;
+    valueSpeed.value = channels.value.speed;
+
     const fixedHue = Array.from({length: 7}, (value, index) => {
         return hsvToRgb(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
     });

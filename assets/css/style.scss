@@ -1,6 +1,8 @@
 body {
     color: #fff;
     background: #000;
+    margin: 1rem;
+    font-size: 1.2rem;
     font-family: Helvetica, sans-serif;
 }
 
@@ -9,19 +11,42 @@ body {
 }
 
 .panel {
+    display: inline-block;
     width: 100%;
     box-sizing: border-box;
-    padding: 0 1rem;
+    margin: 0 0 2rem 0;
 
     &:not(:last-child) {
         margin: 0 0 1rem 0;
     }
 }
 
+.control {
+    border: solid 1px #333;
+    margin: 0 0 .5rem 0;
+}
+
 .picker {
+    &.speed {
+        background: repeating-linear-gradient(90deg,#222 0,#000 1%);
+    }
+}
+
+.modes {
+    color: #fff;
+    background: none;
+    width: 100%;
+    padding: 1rem;
+    font: inherit;
+
+    option {
+        background: #000;
+    }
 }
 
 .slider {
+    background: none;
+    -webkit-appearance: none;
     width: 100%;
     height: 3rem;
     padding: 0;
