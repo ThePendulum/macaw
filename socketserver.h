@@ -6,7 +6,7 @@ class SocketServer {
   WebSocketsServer socket = WebSocketsServer(81);
   
   public:
-    void start(Leds leds) {
+    void start(Leds *leds) {
       socket.begin();
       socket.onEvent([this, leds](uint8_t num, WStype_t type, uint8_t * payload, size_t payloadLength) {
         this->handleEvent(num, type, payload, payloadLength, leds);  
@@ -20,17 +20,18 @@ class SocketServer {
     }
 
   private:
-    void handleEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t payloadLength, Leds leds) {
+    void handleEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t payloadLength, Leds *leds) {
+      IPAddress ip = socket.remoteIP(num);
       StaticJsonBuffer<200> jsonBuffer;
       
       switch(type) {
         case WStype_DISCONNECTED: {
-          Serial.printf("[%u] Disconnected!\n", num); break;
+          Serial.printf("#%u disconnected\n", num, ip[0], ip[1], ip[2], ip[3]);
+          
+          break;
         }
         case WStype_CONNECTED: {
-          IPAddress ip = socket.remoteIP(num);
-          
-          Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+          Serial.printf("%d.%d.%d.%d (#%u) connected\n", ip[0], ip[1], ip[2], ip[3], num);
 
           break;
         }
@@ -38,16 +39,31 @@ class SocketServer {
           JsonObject& root = jsonBuffer.parseObject(payload);
 
           if(root.success()) {
-            int hue = root["hue"];
-            leds.setHue(hue);
-            
-            Serial.println(hue);
+            this->setValues(leds, root);
           } else {
             Serial.println("JSON parse failed");
           }
 
           break;
         }
+      }
+    };
+    
+    void setValues(Leds *leds, JsonObject& root) {
+      if(root.containsKey("hue")) {
+          leds->setHue(root["hue"]);
+      }
+      
+      if(root.containsKey("hueMode")) {
+          leds->setHueMode(root["hueMode"]);
+      }
+      
+      if(root.containsKey("saturation")) {
+          leds->setSaturation(root["saturation"]);
+      }
+      
+      if(root.containsKey("value")) {
+          leds->setValue(root["value"]);
       }
     };
 };

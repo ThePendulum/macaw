@@ -1,4 +1,5 @@
 #include <FastLED.h>
+#include "funcs.h"
 
 class Leds {
   #define DATA_PIN 5
@@ -6,9 +7,13 @@ class Leds {
   
   CRGB leds[NUM_LEDS];
 
+  int hueMode = 0;
+
   int hue = 0;
   int saturation = 255;
   int value = 255;
+
+  int (*hueFunc)(int, int, int) = mono;
 
   public:
     void init() {
@@ -16,7 +21,11 @@ class Leds {
     }
 
     void render(int beat) {
-      FastLED.showColor(CHSV(beat % 255, saturation, value));
+      for(int index = 0; index < NUM_LEDS; index++) {
+        leds[index] = CHSV(hueFunc(beat, index, hue), saturation, value);
+      }
+
+      FastLED.show();
     }
 
     void setHue(int newHue) {
@@ -29,5 +38,24 @@ class Leds {
 
     void setValue(int newValue) {
       value = newValue;
+    }
+    
+    int setHueMode(int newHueMode) {
+      hueMode = newHueMode;
+      
+      switch(newHueMode) {
+        case 0: {
+          hueFunc = mono; break;
+        }
+        case 1: {
+          hueFunc = cycle; break;
+        }
+        case 2: {
+          hueFunc = rainbow; break;
+        }
+        case 3: {
+          hueFunc = spectrum; break;
+        }
+      }
     }
 };

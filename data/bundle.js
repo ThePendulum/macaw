@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,64 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_config__ = __webpack_require__(2);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return hsvToRgb; });
+/* unused harmony export hsvToHex */
+
+
+var hsvToRgb = function hsvToRgb(h, s, v) {
+    var r = void 0,
+        g = void 0,
+        b = void 0;
+
+    h = Math.abs(h % 256) / 256;
+    s = Math.max(0, Math.min(255, s)) / 255;
+    v = Math.max(0, Math.min(255, v)) / 255;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch (i % 6) {
+        case 0:
+            r = v, g = t, b = p;break;
+        case 1:
+            r = q, g = v, b = p;break;
+        case 2:
+            r = p, g = v, b = t;break;
+        case 3:
+            r = p, g = q, b = v;break;
+        case 4:
+            r = t, g = p, b = v;break;
+        case 5:
+            r = v, g = p, b = q;break;
+    }
+
+    return {
+        red: Math.round(r * 255),
+        green: Math.round(g * 255),
+        blue: Math.round(b * 255),
+        toString: function toString() {
+            return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+        }
+    };
+};
+
+var hsvToHex = function hsvToHex(h, s, v) {
+    var rgb = hsvToRgb(h, s, v);
+
+    return '#' + ('0' + Math.round(rgb.r).toString(16)).slice(-2) + ('0' + Math.round(rgb.g).toString(16)).slice(-2) + ('0' + Math.round(rgb.b).toString(16)).slice(-2);
+};
+
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_config__ = __webpack_require__(3);
 
 
 
@@ -102,13 +159,13 @@ socket.emit = function (property, value) {
 /* harmony default export */ __webpack_exports__["a"] = (socket);
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119,14 +176,16 @@ config.socket = window.location.hostname ? 'ws://' + window.location.hostname + 
 /* harmony default export */ __webpack_exports__["a"] = (config);
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_style_scss__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_style_scss__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__css_style_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__css_style_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__socket_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__socket_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__ = __webpack_require__(0);
+
 
 
 
@@ -134,8 +193,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 var hue = document.querySelector('#hue');
+var hueMode = document.querySelector('#hueMode');
+
 var saturation = document.querySelector('#saturation');
+var saturationMode = document.querySelector('#saturationMode');
+
 var value = document.querySelector('#value');
+var valueMode = document.querySelector('#valueMode');
 
 var channels = {
     hue: {
@@ -144,17 +208,24 @@ var channels = {
     },
     saturation: {
         mode: 0,
-        value: 1
+        value: 255
     },
     value: {
         mode: 0,
-        value: 1
+        value: 255
     }
 };
 
 hue.addEventListener('input', function (event) {
     channels.hue.value = parseInt(event.target.value);
     __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('hue', channels.hue.value);
+
+    sync();
+});
+
+hueMode.addEventListener('change', function (event) {
+    channels.hue.mode = parseInt(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('hueMode', channels.hue.mode);
 
     sync();
 });
@@ -166,6 +237,13 @@ saturation.addEventListener('input', function (event) {
     sync();
 });
 
+saturationMode.addEventListener('change', function (event) {
+    channels.saturation.mode = parseInt(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('saturationMode', channels.saturation.mode);
+
+    sync();
+});
+
 value.addEventListener('input', function (event) {
     channels.value.value = parseInt(event.target.value);
     __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('value', channels.value.value);
@@ -173,11 +251,27 @@ value.addEventListener('input', function (event) {
     sync();
 });
 
-function sync() {
-    hue.value = channels.hue.value;
-    saturation.value = channels.saturation.value;
-    value.value = channels.value.value;
+valueMode.addEventListener('change', function (event) {
+    channels.value.mode = parseInt(event.target.value);
+    __WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].emit('valueMode', channels.value.mode);
+
+    sync();
+});
+
+function sync(channel) {
+    var fixedHue = Array.from({ length: 7 }, function (value, index) {
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
+    });
+
+    var fixedSaturation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, 255, channels.value.value);
+    var fixedValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, channels.saturation.value, 255);
+
+    hue.parentElement.style = 'background: linear-gradient(to right, ' + fixedHue[0] + ', ' + fixedHue[1] + ', ' + fixedHue[2] + ', ' + fixedHue[3] + ', ' + fixedHue[4] + ', ' + fixedHue[5] + ', ' + fixedHue[6] + ')';
+    saturation.parentElement.style = 'background: linear-gradient(to right, rgb(255, 255, 255), rgb(' + fixedSaturation.red + ', ' + fixedSaturation.green + ', ' + fixedSaturation.blue + '))';
+    value.parentElement.style = 'background: linear-gradient(to right, rgb(0, 0, 0), rgb(' + fixedValue.red + ', ' + fixedValue.green + ', ' + fixedValue.blue + '))';
 }
+
+sync();
 
 /***/ })
 /******/ ]);

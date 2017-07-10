@@ -1,11 +1,11 @@
 'use strict';
 
-const hsvToRgb = function(h, s, v){
+const hsvToRgb = function(h, s, v) {
     let r, g, b;
 
-    h = Math.abs(h % 360) / 360;
-    s = Math.max(0, Math.min(1, s));
-    v = Math.max(0, Math.min(1, v));
+    h = Math.abs(h % 256) / 256;
+    s = Math.max(0, Math.min(255, s)) / 255;
+    v = Math.max(0, Math.min(255, v)) / 255;
 
     const i = Math.floor(h * 6);
     const f = h * 6 - i;
@@ -23,9 +23,12 @@ const hsvToRgb = function(h, s, v){
     }
 
     return {
-        r: r * 255,
-        g: g * 255,
-        b: b * 255
+        red: Math.round(r * 255),
+        green: Math.round(g * 255),
+        blue: Math.round(b * 255),
+        toString() {
+            return `rgb(${this.red}, ${this.green}, ${this.blue})`;
+        }
     };
 };
 

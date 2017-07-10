@@ -23,7 +23,7 @@ void setup() {
   network.goOnline();
 
   webServer.start();
-  socketServer.start(leds);
+  socketServer.start(&leds);
 }
 
 void loop() {
@@ -36,6 +36,6 @@ void loop() {
   if(now - lastBeat > wait) {
     lastBeat = now;
     
-    leds.render(beat);
+    leds.render(beat++);
   }
 }

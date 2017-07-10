@@ -15,15 +15,37 @@
 
     <body>
         <div class="panel">
-            <input type="range" id="hue" value="0" min="0" max="255">
+            <select id="hueMode">
+                <option value="0" selected>Mono</option>
+                <option value="1">Cycle</option>
+                <option value="2">Rainbow</option>
+                <option value="3">Spectrum</option>
+            </select>
+
+            <div class="picker hue">
+                <input type="range" id="hue" class="slider" value="0" min="0" max="256">
+            </div>
         </div>
 
         <div class="panel">
-            <input type="range" id="saturation" value="1" min="0" max="255">
+            <select id="saturationMode">
+                <option value="0" selected>Mono</option>
+            </select>
+
+            <div class="picker saturation">
+                <input type="range" id="saturation" class="slider" value="255" min="0" max="255">
+            </div>
         </div>
 
         <div class="panel">
-            <input type="range" id="value" value="1" min="0" max="255">
+            <select id="valueMode">
+                <option value="0" selected>Mono</option>
+                <option value="1">Chase</option>
+            </select>
+
+            <div class="picker value">
+                <input type="range" id="value" class="slider" value="255" min="0" max="255">
+            </div>
         </div>
     </body>
 </html>
