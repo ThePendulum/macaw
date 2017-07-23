@@ -2,6 +2,7 @@
 #include "network.h"
 #include "webserver.h"
 #include "socketserver.h"
+#include <EEPROM.h>
 
 Leds leds;
 WebServer webServer;
@@ -15,10 +16,12 @@ int beat = 0;
 uint32_t lastBeat = millis();
 
 void setup() {
+  EEPROM.begin(16);
+      
   Serial.begin(115200);
   Serial.println("Initializing Macaw");
 
-  leds.init();
+  leds.init(beat);
 
   network.goOnline();
 
@@ -27,15 +30,15 @@ void setup() {
 }
 
 void loop() {
+  uint32_t now = millis();
+  
   network.loop();
   webServer.loop();
-  socketServer.loop();
-
-  uint32_t now = millis();
+  socketServer.loop(&leds, now);
 
   if(now - lastBeat > wait) {
     lastBeat = now;
     
-    leds.render(beat++);
+    leds.render(beat++, now);
   }
 }

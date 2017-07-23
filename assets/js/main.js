@@ -35,6 +35,33 @@ const channels = {
     }
 };
 
+socket.init(channels, sync);
+
+function sync(channel) {
+    hue.value = channels.hue.value;
+    hueMode.value = channels.hue.mode;
+    hueSpeed.value = channels.hue.speed;
+
+    saturation.value = channels.saturation.value;
+    saturationMode.value = channels.saturation.mode;
+    saturationSpeed.value = channels.saturation.speed;
+
+    value.value = channels.value.value;
+    valueMode.value = channels.value.mode;
+    valueSpeed.value = channels.value.speed;
+
+    const fixedHue = Array.from({length: 7}, (value, index) => {
+        return hsvToRgb(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
+    });
+
+    const fixedSaturation = hsvToRgb(channels.hue.value, 255, channels.value.value);
+    const fixedValue = hsvToRgb(channels.hue.value, channels.saturation.value, 255);
+    
+    hue.parentElement.style = `background: linear-gradient(to right, ${fixedHue[0]}, ${fixedHue[1]}, ${fixedHue[2]}, ${fixedHue[3]}, ${fixedHue[4]}, ${fixedHue[5]}, ${fixedHue[6]})`;
+    saturation.parentElement.style = `background: linear-gradient(to right, rgb(255, 255, 255), rgb(${fixedSaturation.red}, ${fixedSaturation.green}, ${fixedSaturation.blue}))`;
+    value.parentElement.style = `background: linear-gradient(to right, rgb(0, 0, 0), rgb(${fixedValue.red}, ${fixedValue.green}, ${fixedValue.blue}))`;
+}
+
 hue.addEventListener('input', event => {
     channels.hue.value = parseInt(event.target.value);
     socket.emit('hue', channels.hue.value);
@@ -97,31 +124,5 @@ valueSpeed.addEventListener('input', event => {
 
     sync();
 });
-
-
-function sync(channel) {
-    hue.value = channels.hue.value;
-    hueMode.value = channels.hue.mode;
-    hueSpeed.value = channels.hue.speed;
-
-    saturation.value = channels.saturation.value;
-    saturationMode.value = channels.saturation.mode;
-    saturationSpeed.value = channels.saturation.speed;
-
-    value.value = channels.value.value;
-    valueMode.value = channels.value.mode;
-    valueSpeed.value = channels.value.speed;
-
-    const fixedHue = Array.from({length: 7}, (value, index) => {
-        return hsvToRgb(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
-    });
-
-    const fixedSaturation = hsvToRgb(channels.hue.value, 255, channels.value.value);
-    const fixedValue = hsvToRgb(channels.hue.value, channels.saturation.value, 255);
-    
-    hue.parentElement.style = `background: linear-gradient(to right, ${fixedHue[0]}, ${fixedHue[1]}, ${fixedHue[2]}, ${fixedHue[3]}, ${fixedHue[4]}, ${fixedHue[5]}, ${fixedHue[6]})`;
-    saturation.parentElement.style = `background: linear-gradient(to right, rgb(255, 255, 255), rgb(${fixedSaturation.red}, ${fixedSaturation.green}, ${fixedSaturation.blue}))`;
-    value.parentElement.style = `background: linear-gradient(to right, rgb(0, 0, 0), rgb(${fixedValue.red}, ${fixedValue.green}, ${fixedValue.blue}))`;
-}
 
 sync();

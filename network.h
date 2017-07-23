@@ -1,8 +1,12 @@
 #include <stdint.h>
+#include <EEPROM.h>
 #include <ESP8266WiFi.h>
+#include <DNSServer.h>
 #include <ArduinoOTA.h>
 
 class Network {
+  DNSServer dns;
+
   const char* clientSsid = "niels-wifi";
   const char* clientPassword = "alphase42#omegalaxy43";
   
@@ -22,6 +26,7 @@ class Network {
 
     void loop() {
       ArduinoOTA.handle();
+      dns.processNextRequest();
     }
 
   private:
@@ -50,6 +55,8 @@ class Network {
         
         WiFi.softAP(hostSsid, hostPassword);
         IPAddress ip = WiFi.softAPIP();
+
+        dns.start(53, "*", ip);
     
         Serial.printf("Set up access point '%s' with IP address %u.%u.%u.%u\n", hostSsid, ip[0], ip[1], ip[2], ip[3]);
     }

@@ -26,7 +26,7 @@
 
             <div class="control">
                 <div class="picker speed">
-                    <input type="range" id="hueSpeed" class="slider" value="0" min="0" max="2" step="0.01">
+                    <input type="range" id="hueSpeed" class="slider" value="0" min="-1" max="1" step="0.05">
                 </div>
             </div>
         </div>
@@ -34,6 +34,7 @@
         <div class="panel">
             <select id="saturationMode" class="control modes">
                 <option value="0" selected>Mono</option>
+                <option value="1" selected>Chase</option>
             </select>
 
             <div class="control picker saturation">
@@ -42,7 +43,7 @@
 
             <div class="control">
                 <div class="picker speed">
-                    <input type="range" id="saturationSpeed" class="slider" value="0" min="0" max="1" step="0.01">
+                    <input type="range" id="saturationSpeed" class="slider" value="0" min="-0.1" max="0.1" step="0.005">
                 </div>
             </div>
         </div>
@@ -61,7 +62,7 @@
 
             <div class="control">
                 <div class="picker speed">
-                    <input type="range" id="valueSpeed" class="slider" value="0" min="0" max="1" step="0.01">
+                    <input type="range" id="valueSpeed" class="slider" value="0" min="-0.1" max="0.1" step="0.005">
                 </div>
             </div>
         </div>

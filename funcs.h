@@ -9,11 +9,15 @@ int hueRainbow(int beat, int index, float pace, int hue) {
 }
 
 int hueSpectrum(int beat, int index, float pace, int hue) {
-  return pace * beat + index * 42.5 + hue;
+  return pace * beat + index * 42.666666667 + hue;
 }
 
 int saturationMono(int beat, int index, float pace, int saturation) {
   return saturation;
+}
+
+int saturationChase(int beat, int index, float pace, int saturation) {
+  return (.5 + .5 * sin(index + pace * beat)) * saturation;
 }
 
 int valueMono(int beat, int index, float pace, int value) {
@@ -25,9 +29,9 @@ int valueChase(int beat, int index, float pace, int value) {
 }
 
 int valueBlink(int beat, int index, float pace, int value) {
-  return round(pace * beat) % 2 ? 0 : value;
+  return round(pace * 2 * beat) % 2 ? 0 : value;
 }
 
 int valueStrobe(int beat, int index, float pace, int value) {
-  return round(pace * beat) % 5 ? 0 : value;
+  return round(pace * 10 * beat) % 10 ? 0 : value;
 }

@@ -137,15 +137,19 @@ var ws = void 0;
 
 ws = new WebSocket(__WEBPACK_IMPORTED_MODULE_0_config__["a" /* default */].socket);
 
-ws.addEventListener('message', function (message) {
-    var data = JSON.parse(message.data);
-
-    Object.keys(data).forEach(function (key) {
-        store.commit(key, data[key]);
-    });
-});
-
 var socket = {};
+
+socket.init = function (channels, sync) {
+    ws.addEventListener('message', function (message) {
+        var data = JSON.parse(message.data);
+
+        Object.keys(data).forEach(function (key) {
+            channels[key] = data[key];
+
+            sync();
+        });
+    });
+};
 
 socket.emit = function (property, value) {
     var msg = {};
@@ -171,7 +175,7 @@ socket.emit = function (property, value) {
 "use strict";
 var config = {};
 
-config.socket = window.location.hostname ? 'ws://' + window.location.hostname + ':81' : 'ws://192.168.178.33:81';
+config.socket = window.location.hostname ? 'ws://' + window.location.hostname + ':81' : 'ws://192.168.178.34:81';
 
 /* harmony default export */ __webpack_exports__["a"] = (config);
 
@@ -221,6 +225,33 @@ var channels = {
         speed: 0.1
     }
 };
+
+__WEBPACK_IMPORTED_MODULE_1__socket_js__["a" /* default */].init(channels, sync);
+
+function sync(channel) {
+    hue.value = channels.hue.value;
+    hueMode.value = channels.hue.mode;
+    hueSpeed.value = channels.hue.speed;
+
+    saturation.value = channels.saturation.value;
+    saturationMode.value = channels.saturation.mode;
+    saturationSpeed.value = channels.saturation.speed;
+
+    value.value = channels.value.value;
+    valueMode.value = channels.value.mode;
+    valueSpeed.value = channels.value.speed;
+
+    var fixedHue = Array.from({ length: 7 }, function (value, index) {
+        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
+    });
+
+    var fixedSaturation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, 255, channels.value.value);
+    var fixedValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, channels.saturation.value, 255);
+
+    hue.parentElement.style = 'background: linear-gradient(to right, ' + fixedHue[0] + ', ' + fixedHue[1] + ', ' + fixedHue[2] + ', ' + fixedHue[3] + ', ' + fixedHue[4] + ', ' + fixedHue[5] + ', ' + fixedHue[6] + ')';
+    saturation.parentElement.style = 'background: linear-gradient(to right, rgb(255, 255, 255), rgb(' + fixedSaturation.red + ', ' + fixedSaturation.green + ', ' + fixedSaturation.blue + '))';
+    value.parentElement.style = 'background: linear-gradient(to right, rgb(0, 0, 0), rgb(' + fixedValue.red + ', ' + fixedValue.green + ', ' + fixedValue.blue + '))';
+}
 
 hue.addEventListener('input', function (event) {
     channels.hue.value = parseInt(event.target.value);
@@ -284,31 +315,6 @@ valueSpeed.addEventListener('input', function (event) {
 
     sync();
 });
-
-function sync(channel) {
-    hue.value = channels.hue.value;
-    hueMode.value = channels.hue.mode;
-    hueSpeed.value = channels.hue.speed;
-
-    saturation.value = channels.saturation.value;
-    saturationMode.value = channels.saturation.mode;
-    saturationSpeed.value = channels.saturation.speed;
-
-    value.value = channels.value.value;
-    valueMode.value = channels.value.mode;
-    valueSpeed.value = channels.value.speed;
-
-    var fixedHue = Array.from({ length: 7 }, function (value, index) {
-        return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(index * (255 / 6), channels.saturation.value, channels.value.value).toString();
-    });
-
-    var fixedSaturation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, 255, channels.value.value);
-    var fixedValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__hsvToRgb_js__["a" /* hsvToRgb */])(channels.hue.value, channels.saturation.value, 255);
-
-    hue.parentElement.style = 'background: linear-gradient(to right, ' + fixedHue[0] + ', ' + fixedHue[1] + ', ' + fixedHue[2] + ', ' + fixedHue[3] + ', ' + fixedHue[4] + ', ' + fixedHue[5] + ', ' + fixedHue[6] + ')';
-    saturation.parentElement.style = 'background: linear-gradient(to right, rgb(255, 255, 255), rgb(' + fixedSaturation.red + ', ' + fixedSaturation.green + ', ' + fixedSaturation.blue + '))';
-    value.parentElement.style = 'background: linear-gradient(to right, rgb(0, 0, 0), rgb(' + fixedValue.red + ', ' + fixedValue.green + ', ' + fixedValue.blue + '))';
-}
 
 sync();
 
