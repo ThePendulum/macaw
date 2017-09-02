@@ -1,15 +1,23 @@
 #include <math.h>
 
-int hueMono(int beat, int index, float pace, int hue) {
+int hueMono(int previous, int beat, int index, float pace, int hue) {
   return pace * beat + hue;
 }
 
-int hueRainbow(int beat, int index, float pace, int hue) {
+int hueRainbow(int previous, int beat, int index, float pace, int hue) {
   return pace * beat + index + hue;
 }
 
-int hueSpectrum(int beat, int index, float pace, int hue) {
-  return pace * beat + index * 42.666666667 + hue;
+int hueHexad(int previous, int beat, int index, float pace, int hue) {
+  return pace * beat + index * 42.666667 + hue;
+}
+
+int hueTriad(int previous, int beat, int index, float pace, int hue) {
+  return pace * beat + index * 85.333333 + hue;
+}
+
+int hueRandom(int previous, int beat, int index, float pace, int hue) {
+  return previous;
 }
 
 int saturationMono(int beat, int index, float pace, int saturation) {

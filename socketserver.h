@@ -59,6 +59,8 @@ class SocketServer {
           break;
         }
       }
+
+      Serial.println(type);
     };
     
     void setValues(Leds *leds, JsonObject& root) {

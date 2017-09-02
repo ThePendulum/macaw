@@ -23,9 +23,13 @@ class Leds {
   int valueMode = 0;
   float valueSpeed = 0.01;
 
-  int (*hueFunc)(int, int, float, int) = hueMono;
+  int (*hueFunc)(int, int, int, float, int) = hueMono;
   int (*valueFunc)(int, int, float, int) = valueMono;
   int (*saturationFunc)(int, int, float, int) = saturationMono;
+
+  int hueFuncResult;
+  int valueFuncResult;
+  int saturationFuncResult;
 
   public:
     void init(int beat) {
@@ -50,7 +54,9 @@ class Leds {
 
     void render(int beat, int now) {
       for(int index = 0; index < NUM_LEDS; index++) {
-        leds[index] = CHSV(hueFunc(beat, index, hueSpeed, hue), saturationFunc(beat, index, saturationSpeed, saturation), valueFunc(beat, index, valueSpeed, value));
+        hueFuncResult = hueFunc(hueFuncResult, beat, index, hueSpeed, hue);
+        
+        leds[index] = CHSV(hueFuncResult, saturationFunc(beat, index, saturationSpeed, saturation), valueFunc(beat, index, valueSpeed, value));
       }
 
       FastLED.show();
@@ -83,7 +89,17 @@ class Leds {
           hueFunc = hueRainbow; break;
         }
         case 2: {
-          hueFunc = hueSpectrum; break;
+          hueFunc = hueHexad; break;
+        }
+        case 3: {
+          hueFunc = hueTriad; break;
+        }
+        case 4: {
+          for(int index = 0; index < NUM_LEDS; index++) {
+            leds[index].red = random(0, 255);
+          }
+      
+          hueFunc = hueRandom; break;
         }
       }
 
