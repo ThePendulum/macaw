@@ -8,7 +8,7 @@ class Network {
   DNSServer dns;
 
   const char* clientSsid = "niels-wifi";
-  const char* clientPassword = "alphase42#omegalaxy43";
+  const char* clientPassword = "abcde12345";
   
   const char* hostSsid = "macaw2";
   const char* hostPassword = "lettherebelight";
